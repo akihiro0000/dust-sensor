@@ -1,5 +1,6 @@
 import RPi.GPIO as GPIO
 import time
+import paho-mqtt
 
 def pulseIn(PIN, start=1, end=0):
     if start==0: end = 1
