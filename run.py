@@ -1,6 +1,7 @@
 import RPi.GPIO as GPIO
 import time
 import paho-mqtt
+from datetime import datetime
 
 def pulseIn(PIN, start=1, end=0):
     if start==0: end = 1
@@ -38,6 +39,12 @@ def get_pm25(PIN):
             print(concent, " [pcs/0.01cf]")
             print(pcs2ugm3(concent), " [ug/m^3]")
             print("-------------------")
+            tim = '"timestamp":"'+datetime.now().strftime('%Y-%m-%d %H:%M:%S.%f')+'"'
+            rate = 'ratio[%]:'+str(ratio)
+            con = 'concent[pcs/0.01cf]:' + str(concent)
+            pcs2 = 'pcs2ugm3[ug/m^3]:' + str(pcs2ugm3(concent))
+            jsontext = "{"+tim+rate+","+con+","+pcs2+"}"
+            mqtt_client.publish("{}/{}".format("/demo",'car_count'), jsontext)
             break
 
 PIN = 14
@@ -46,6 +53,9 @@ GPIO.setmode(GPIO.BCM)
 # TRIG_PINを出力, ECHO_PINを入力
 GPIO.setup(PIN,GPIO.IN)
 GPIO.setwarnings(False)
+
+mqtt_client = mqtt.Client()
+mqtt_client.connect("fluent-bit",1883, 60)
 
 for i in range(10):
     get_pm25(PIN)
