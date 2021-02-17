@@ -1,6 +1,6 @@
 import RPi.GPIO as GPIO
 import time
-import paho-mqtt
+import paho.mqtt.client as mqtt
 from datetime import datetime
 
 def pulseIn(PIN, start=1, end=0):
