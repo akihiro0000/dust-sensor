@@ -26,7 +26,7 @@ def pcs2ugm3 (pcs):
 def get_pm25(PIN):
     t0 = time.time()
     t = 0
-    ts = 30
+    ts = 1
     while(1):
         dt = pulseIn(PIN, 0)
         if dt<1: t = t + dt
@@ -59,7 +59,7 @@ GPIO.setwarnings(False)
 mqtt_client = mqtt.Client()
 mqtt_client.connect("fluent-bit",1883, 60)
 
-for i in range(10):
+while True:
     get_pm25(PIN)
 
 # ピン設定解除
