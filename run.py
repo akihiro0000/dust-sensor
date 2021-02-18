@@ -62,3 +62,4 @@ for i in range(10):
 
 # ピン設定解除
 GPIO.cleanup()
+mqtt_client.disconnect()
