@@ -43,7 +43,7 @@ def get_pm25(PIN):
             rate = 'ratio[%]:'+str(ratio)
             con = 'concent[pcs/0.01cf]:' + str(concent)
             pcs2 = 'pcs2ugm3[ug/m^3]:' + str(pcs2ugm3(concent))
-            jsontext = "{"+tim+rate+","+con+","+pcs2+"}"
+            jsontext = "{"+tim+","+rate+","+con+","+pcs2+"}"
             mqtt_client.publish("{}/{}".format("/demo",'car_count'), jsontext)
             break
 
