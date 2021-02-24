@@ -1,0 +1,61 @@
+apiVersion: apps/v1
+kind: DaemonSet
+metadata:
+  name: dust-sensor-raspberry
+  labels:
+    k8s-app: dust-sensor-raspberry
+spec:
+  selector:
+    matchLabels:
+      name: dust-sensor-raspberry
+  template:
+    metadata:
+      labels:
+        name: dust-sensor-raspberry
+    spec:
+      nodeSelector:
+        dust-detector: "enabled"
+        smarter.nodetype: "raspberrypi4"
+      tolerations:
+      - key: "smarter.type"
+        value: "edge"
+        effect: "NoSchedule"
+      hostname: dust-sensor-raspberry
+      containers:
+      - name: dust-sensor-raspberry
+        volumeMounts:
+        - mountPath: /dev/gpiomem
+          name: gpiomem
+        - mountPath: /dev/i2c-1
+          name: i2c-1
+        - mountPath: /dev/ttyACM0
+          name: ttyacm0
+        securityContext:
+          privileged: true
+        imagePullPolicy: Always
+        command: ["python3"]
+        args: ["run.py"]
+        image : akihirodive/dust-sensor:v1.0
+        env:
+        - name: MY_NODE_NAME
+          valueFrom:
+            fieldRef:
+              fieldPath: spec.nodeName
+        - name: MQTT_BROKER_HOST
+          value: "fluent-bit"
+        - name: LOG_LEVEL
+          value: "DEBUG"
+        ports:
+        - containerPort: 5000
+          hostPort: 5000
+      volumes:
+      - name: gpiomem
+        hostPath:
+          path: /dev/gpiomem
+      - name: i2c-1
+        hostPath:
+          path: /dev/i2c-1
+      - name: ttyacm0
+        hostPath:
+          path: /dev/ttyACM0
+      terminationGracePeriodSeconds: 30
